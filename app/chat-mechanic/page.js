@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, User, Bot, Wrench, Sun, Moon } from "lucide-react";
+import Link from "next/link";
+import { Send, User, Bot, Wrench, Sun, Moon, ArrowLeft } from "lucide-react";
 
 export default function RelationshipMechanicChat() {
   // --- STATE ---
@@ -186,20 +187,30 @@ export default function RelationshipMechanicChat() {
               </p>
             </div>
           </div>
-          {/* Dark/Light Mode Toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`p-2 rounded-lg ${t.toggleBtn} transition-colors duration-300`}
-            aria-label={
-              darkMode ? "Switch to light mode" : "Switch to dark mode"
-            }
-          >
-            {darkMode ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Back to Dashboard */}
+            <Link
+              href="/dashboard"
+              className={`p-2 rounded-lg ${t.toggleBtn} transition-colors duration-300 flex items-center gap-2`}
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="text-sm hidden sm:inline">Dashboard</span>
+            </Link>
+            {/* Dark/Light Mode Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className={`p-2 rounded-lg ${t.toggleBtn} transition-colors duration-300`}
+              aria-label={
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
+            >
+              {darkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
