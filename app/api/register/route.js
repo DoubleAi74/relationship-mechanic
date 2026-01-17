@@ -2,6 +2,12 @@
 import { NextResponse } from "next/server";
 import { createUserRecord } from "@/actions/getUserData";
 
+export async function GET() {
+  return NextResponse.json({
+    message: "Connection successful! The API is live.",
+  });
+}
+
 export async function POST(request) {
   try {
     // Parse the JSON body from the mobile app
