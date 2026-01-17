@@ -2,59 +2,65 @@
 import { NextResponse } from "next/server";
 import { createUserRecord } from "@/actions/getUserData";
 
-export async function GET() {
-  return NextResponse.json({
-    message: "Connection successful! The API is live.",
-  });
+// Helper function to set CORS headers
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*", // Allow any origin (app, browser, localhost)
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
 }
 
+// 1. Handle OPTIONS (The Preflight Check)
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders() });
+}
+
+// 2. Keep GET (For your browser test)
+export async function GET() {
+  return NextResponse.json(
+    { message: "Connection successful! The API is live." },
+    { headers: corsHeaders() },
+  );
+}
+
+// 3. Handle POST (The actual User Creation)
 export async function POST(request) {
   try {
-    // Parse the JSON body from the mobile app
     const body = await request.json();
     const { firebaseUid, email, targetDays } = body;
 
-    // 1. Validate input
+    // Validate
     if (!firebaseUid || !email || !targetDays) {
       return NextResponse.json(
-        { error: "Missing required fields: firebaseUid, email, or targetDays" },
-        { status: 400 },
+        { error: "Missing required fields" },
+        { status: 400, headers: corsHeaders() },
       );
     }
 
-    // 2. Call your existing server action logic
+    // Action
     const result = await createUserRecord(
       firebaseUid,
       email,
       parseInt(targetDays, 10),
     );
 
-    // 3. Handle result
     if (!result.success) {
       return NextResponse.json(
         { error: result.error },
-        { status: 400 }, // Or 409 if user exists
+        { status: 400, headers: corsHeaders() },
       );
     }
 
-    // 4. Return success
-    return NextResponse.json(result.user, { status: 201 });
+    return NextResponse.json(result.user, {
+      status: 201,
+      headers: corsHeaders(),
+    });
   } catch (error) {
-    console.error("API Create User Error:", error);
+    console.error("API Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 },
+      { status: 500, headers: corsHeaders() },
     );
   }
-}
-
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
 }
